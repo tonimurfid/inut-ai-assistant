@@ -2,13 +2,13 @@
   "name": "inut-ai-assistant",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "mastra dev",
-    "build": "mastra build",
-    "start": "mastra start",
-    "wa": "npx tsx src/mastra/whatsapp/bot.ts"
-  },
+"scripts": {
+  "dev": "mastra dev",
+  "build": "mastra build",
+  "start": "mastra start",
+  "wa": "npx tsx src/mastra/whatsapp/bot.ts",
+  "reminder": "npx tsx src/mastra/workers/reminder.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
