@@ -4,27 +4,51 @@ import Database from 'better-sqlite3';
 
 const db = new Database('./mastra.db');
 
+const categoryEnum = z.enum([
+  'food',
+  'personal_maintenance',
+  'transport',
+  'social',
+  'housing',
+  'communication',
+  'medical',
+  'growth',
+  'buffer',
+  'emergency',
+]);
+
 export const addExpenseTool = createTool({
   id: 'add-expense',
   description: 'Catat pengeluaran baru',
   inputSchema: z.object({
     amount: z.number().describe('Jumlah dalam rupiah'),
-    category: z.enum(['food', 'transport', 'shopping', 'health', 'other']),
-    note: z.string().optional(),
+    category: categoryEnum.describe(`Kategori pengeluaran:
+      - food: makan, minum, groceries
+      - personal_maintenance: skincare, haircut, laundry, kebersihan diri
+      - transport: ojol, bensin, parkir, tiket
+      - social: hangout, nongkrong, hadiah, donasi
+      - housing: kos, listrik, air, internet rumah
+      - communication: pulsa, paket data, langganan HP
+      - medical: obat, dokter, vitamin, kesehatan
+      - growth: buku, kursus, tools, investasi diri
+      - buffer: tabungan, dana darurat rutin
+      - emergency: pengeluaran mendadak tak terduga
+    `),
+    note: z.string().optional().describe('Catatan tambahan'),
   }),
   execute: async (params) => {
     db.prepare('INSERT INTO expenses (amount, category, note) VALUES (?, ?, ?)')
       .run(params.amount, params.category, params.note ?? '');
     return {
       success: true,
-      message: `💸 Dicatat: Rp ${params.amount.toLocaleString('id-ID')} (${params.category})`
+      message: `💸 Dicatat: Rp ${params.amount.toLocaleString('id-ID')} (${params.category})`,
     };
   },
 });
 
 export const expenseSummaryTool = createTool({
   id: 'expense-summary',
-  description: 'Ringkasan pengeluaran minggu ini',
+  description: 'Ringkasan pengeluaran minggu ini per kategori',
   inputSchema: z.object({}),
   execute: async () => {
     const rows = db.prepare(`
@@ -43,7 +67,7 @@ export const expenseSummaryTool = createTool({
     ).join('\n');
 
     return {
-      message: `📊 Pengeluaran minggu ini:\n${breakdown}\n\nTotal: Rp ${totalAll.toLocaleString('id-ID')}`
+      message: `📊 *Pengeluaran minggu ini:*\n${breakdown}\n\n*Total: Rp ${totalAll.toLocaleString('id-ID')}*`,
     };
   },
 });
