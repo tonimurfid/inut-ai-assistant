@@ -111,7 +111,12 @@ async function startBot() {
 
       try {
         const agent = mastra.getAgent('lifeAgent');
-        const response = await agent.generate(text);
+        const response = await agent.generate(text, {
+          memory: {
+            thread: `toni-${senderRaw}`,
+            resource: 'toni',
+          },
+        });
 
         const reply = response.text;
 
