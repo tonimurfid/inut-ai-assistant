@@ -2,14 +2,14 @@
   "name": "inut-ai-assistant",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "dev": "mastra dev",
-  "build": "mastra build",
-  "start": "mastra start",
-  "wa": "npx tsx src/mastra/whatsapp/bot.ts",
-  "reminder": "npx tsx src/mastra/workers/reminder.ts",
-  "clear": "npx tsx src/mastra/db/clear.ts"
-},
+  "scripts": {
+    "dev": "mastra dev",
+    "build": "mastra build",
+    "start": "mastra start",
+    "wa": "npx tsx src/mastra/whatsapp/bot.ts",
+    "reminder": "npx tsx src/mastra/workers/reminder.ts",
+    "clear": "npx tsx src/mastra/db/clear.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -30,6 +30,7 @@
     "better-sqlite3": "^12.8.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "googleapis": "^171.4.0",
     "node-cron": "^4.2.1",
     "pg": "^8.20.0",
     "qrcode-terminal": "^0.12.0",

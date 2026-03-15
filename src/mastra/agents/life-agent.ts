@@ -7,6 +7,8 @@ import { addTodoTool, completeTodoTool, listTodoTool } from '../tools/todo-tools
 import { addExpenseTool, expenseSummaryTool } from '../tools/expense-tools';
 import { addIdeaTool } from '../tools/idea-tools';
 import { addDeadlineTool, listDeadlineTool } from '../tools/deadline-tools';
+import { addGCalEventTool, listGCalEventsTool } from '../tools/gcal-tools';
+
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY!,
@@ -60,6 +62,8 @@ export const lifeAgent = new Agent({
     addIdeaTool,
     addDeadlineTool,
     listDeadlineTool,
+    addGCalEventTool,
+    listGCalEventsTool,
   },
   memory: new Memory({}),
 });
