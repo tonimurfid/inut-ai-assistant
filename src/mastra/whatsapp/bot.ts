@@ -112,6 +112,7 @@ async function startBot() {
       try {
         const agent = mastra.getAgent('lifeAgent');
         const response = await agent.generate(text);
+
         const reply = response.text;
 
         await sock.sendMessage(from, { text: reply });
