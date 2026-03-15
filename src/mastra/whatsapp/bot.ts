@@ -7,8 +7,32 @@ import makeWASocket, {
 import { Boom } from '@hapi/boom';
 import qrcode from 'qrcode-terminal';
 import { mastra } from '../index';
+import express from 'express';
 
+const app = express();
+app.use(express.json());
+
+let sockGlobal: any = null;
 let myLID = '';
+
+// Endpoint untuk reminder worker
+app.post('/send', async (req, res) => {
+  try {
+    if (!sockGlobal) {
+      res.status(503).json({ ok: false, error: 'Bot not connected yet' });
+      return;
+    }
+    const { message } = req.body;
+    const target = `${process.env.ALLOWED_WA_NUMBER}@s.whatsapp.net`;
+    await sockGlobal.sendMessage(target, { text: message });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Send error:', err);
+    res.status(500).json({ ok: false, error: String(err) });
+  }
+});
+
+app.listen(3001, () => console.log('🌐 Bot API running on port 3001'));
 
 async function startBot() {
   const { state, saveCreds } = await useMultiFileAuthState('./wa-session');
@@ -20,7 +44,8 @@ async function startBot() {
     printQRInTerminal: false,
   });
 
-  // Tampilkan QR di terminal
+  sockGlobal = sock;
+
   sock.ev.on('connection.update', async (update) => {
     const { connection, lastDisconnect, qr } = update;
 
@@ -41,7 +66,6 @@ async function startBot() {
     }
   });
 
-  // Simpan LID sendiri saat creds update
   sock.ev.on('creds.update', () => {
     saveCreds();
     const lid = state.creds?.me?.lid;
@@ -51,7 +75,6 @@ async function startBot() {
     }
   });
 
-  // Handle pesan masuk
   sock.ev.on('messages.upsert', async ({ messages, type }) => {
     if (type !== 'notify') return;
 
@@ -64,19 +87,13 @@ async function startBot() {
         .replace('@lid', '');
 
       const allowedNumber = process.env.ALLOWED_WA_NUMBER!;
-      const allowedLID = process.env.ALLOWED_WA_LID || '';        
+      const allowedLID = process.env.ALLOWED_WA_LID || '';
 
-      console.log(`📱 from: "${from}"`);
-      console.log(`📱 senderRaw: "${senderRaw}"`);
-      console.log(`📱 myLID: "${myLID}"`);
-      console.log(`📱 ALLOWED: "${allowedNumber}"`);
-      console.log(`📱 ALLOWED LID: "${allowedLID}"`);
-      // Izinkan kalau: nomor cocok ATAU LID cocok
       const isAllowed =
         senderRaw === allowedNumber ||
         senderRaw === allowedLID ||
+        senderRaw === myLID ||
         from.includes(allowedNumber);
-
 
       if (!isAllowed) {
         console.log(`⛔ Tidak diizinkan: ${senderRaw}`);
