@@ -20,7 +20,20 @@ function loadDoc(filename: string): string {
   }
 }
 
-const instructions = `
+const getInstructions = () => {
+  const now = new Date().toLocaleString('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  return `
+Sekarang adalah: ${now} WIB
+
 ${loadDoc('SOUL.md')}
 
 ${loadDoc('IDENTITY.md')}
@@ -30,13 +43,14 @@ ${loadDoc('USER.md')}
 ${loadDoc('AGENTS.md')}
 
 ${loadDoc('TOOLS.md')}
-`;
+  `;
+};
 
 export const lifeAgent = new Agent({
   id: 'life-agent',
   name: 'inut-life-assistant',
-  instructions,
-  model: openrouter('openai/gpt-4o-mini'),
+  instructions: getInstructions,
+  model: openrouter('deepseek/deepseek-chat'),
   tools: {
     addTodoTool,
     completeTodoTool,
