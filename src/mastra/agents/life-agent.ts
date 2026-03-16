@@ -52,7 +52,8 @@ export const lifeAgent = new Agent({
   id: 'life-agent',
   name: 'inut-life-assistant',
   instructions: getInstructions,
-  model: openrouter('openai/gpt-4o-mini'),
+  // model: openrouter('openai/gpt-4o-mini'),
+  model: "deepseek/deepseek-chat",
   tools: {
     addTodoTool,
     completeTodoTool,
